@@ -27,3 +27,107 @@ pageNum = 1
 
 filePath = "../input.txt"
 writing = args["font"]
+
+
+if writing.lower() == "uv":
+      lineGap = 120
+elif writing.lower() == "rajat" or writing.lower() == "swagat":
+  lineGap = 165
+elif writing.lower() == "piyush":
+  lineGap = 144
+else:
+  lineGap = 150
+
+FontType = "../Fonts/{}_font/".format(writing)
+
+print("Starting.")
+
+x, y = margin + 20, margin + lineGap
+
+scale_percent = int(
+    input("What percent of quality (between 40 to 100) you want in output file? ")
+)
+
+if scale_percent < 0 or scale_percent > 100 or scale_percent < 40:
+    print("Please enter the quality btw given range!")
+    time.sleep(5)
+    sys.exit()
+
+wasDQ = False
+
+
+# Space for Functions 
+
+
+def writeByLine():
+    pass
+
+def newLine():
+    pass
+
+
+
+# MAIN 
+
+if __name__ == "__main__":
+    try:
+        file = open(filePath, "r")
+        content = file.read()
+
+        l = len(content)
+        content = content.split("\n")
+
+        print("Text Reading Completed.")
+        for i in range(len(content)):
+            writeByLine(content[i])
+            newLine()
+        print("Saved Page: ", pageNum)
+
+        background.save("../Output/{}_output_{}.png".format(writing, pageNum))
+
+        ImagesPath = [
+            "../Output/{}_output_{}.png".format(writing, page)
+            for page in range(1, pageNum + 1)
+        ]
+
+        print("Adding lines.")
+
+        for path in ImagesPath:
+            img = cv2.imread(path, cv2.IMREAD_COLOR)
+            x, y = 0, 228
+
+            cv2.line(img, (lineMargin - 20, 0), (lineMargin - 20, 3508), (0, 0, 0), 3)
+            cv2.line(img, (x, y), (x + 2480, y), (0, 0, 0), 2)
+
+            while y <= 3349:
+                cv2.line(img, (x, y), (x + 2480, y), (0, 0, 0), 2)
+                y += lineMargin
+
+            width = int(img.shape[1] * scale_percent / 100)
+            height = int(img.shape[0] * scale_percent / 100)
+            dim = (width, height)
+
+            mimage = cv2.resize(img, dim, interpolation=cv2.INTER_NEAREST)
+            cv2.imwrite(path, mimage)
+
+        height, width = Image.open(ImagesPath[0]).size
+        pdf = FPDF(unit="pt", format=(height, width))
+
+        for i in range(0, pageNum):
+            pdf.add_page()
+            pdf.image(ImagesPath[i], 0, 0)
+
+        print("Saving the pdf.")
+        pdf_name = "../PDF_Outputs/{}_Output.pdf".format(writing)
+        pdf.output(pdf_name, "F")
+
+        print("Removing unnecessary files.")
+        for path in ImagesPath:
+            os.remove(path)
+
+        print("Done.")
+        print("Find your output at " + pdf_name + ".")
+        time.sleep(5)
+    except Exception as E:
+        pass
+        print(E, "Try again!")
