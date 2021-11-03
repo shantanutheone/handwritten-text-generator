@@ -53,17 +53,145 @@ if scale_percent < 0 or scale_percent > 100 or scale_percent < 40:
     time.sleep(5)
     sys.exit()
 
-wasDQ = False
-
 
 # Space for Functions 
 
 
-def writeByLine():
-    pass
+def space():
+    global x, y
+
+    space = Image.open("../Fonts/myfont/space.png")
+    width = space.width
+    x += width
+    background.paste(space, (x, y))
+    del space
+
 
 def newLine():
-    pass
+    global x, y
+
+    x = margin + 20
+    y += margin
+
+
+def writeAlphabet(path):
+    global x, y
+
+    letter = Image.open(path)
+    background.paste(letter, (x, y))
+    x += letter.width
+
+
+def check_pageExceed():
+    global writing, pageNum, background, x, y, margin, lineGap
+
+    if y >= 3100:
+        background.save("../Output/{}_output_{}.png".format(writing, pageNum))
+        print("Saved Page: ", pageNum)
+        bg = Image.open("../Fonts/myfont/a4.jpg")
+        background = bg
+        x, y = margin, margin + lineGap
+        pageNum += 1
+
+
+wasDQ = False
+
+
+def ProcessNwrite(word):
+    global x, y, background, pageNum, writing, margin, lineGap, wasDQ
+
+    if x > SheetWidth - wordsPerLine * len(word):
+        newLine()
+
+    check_pageExceed()
+
+    path = FontType
+    for letter in word:
+        if letter in allowedCharacters:
+            if letter.isupper():
+                path += "upper/{}".format(letter)
+            elif letter.islower():
+                path += "lower/{}".format(letter)
+            elif letter.isnumeric():
+                path += "digits/{}".format(letter)
+            else:
+                path += "symbols/"
+                if letter == ",":
+                    path += "comma"
+                elif letter == ".":
+                    path += "fullstop"
+                elif letter == "!":
+                    path += "exclamation"
+                elif letter == "-":
+                    path += "hiphen"
+                elif letter == "#":
+                    path += "hash"
+                elif letter == "?":
+                    path += "question"
+                elif letter == "(":
+                    path += "bracketop"
+                elif letter == ")":
+                    path += "bracketcl"
+                elif letter == ":":
+                    path += "colon"
+                elif letter == ";":
+                    path += "semicolon"
+                elif letter == "{":
+                    path += "Cbracketop"
+                elif letter == "}":
+                    path += "Cbracketcl"
+                elif letter == "[":
+                    path += "osb"
+                elif letter == "]":
+                    path += "csb"
+                elif letter == "<":
+                    path += "oab"
+                elif letter == ">":
+                    path += "cab"
+                elif letter == "=":
+                    path += "equals"
+                elif letter == "'":
+                    path += "osq"
+                elif letter == "%":
+                    path += "percent"
+                elif letter == "&":
+                    path += "empersand"
+                elif letter == "$":
+                    path += "dollar"
+                elif letter == "@":
+                    path += "at"
+                elif letter == "*":
+                    path += "asterisk"
+                elif letter == "_":
+                    path += "underscore"
+                elif letter == "^":
+                    path += "cap"
+                elif letter == '"' and wasDQ:
+                    path += "cdq"
+                    wasDQ = False
+                elif letter == '"':
+                    path += "odq"
+                    wasDQ = True
+            path += ".png"
+
+            writeAlphabet(path)
+            path = FontType
+        else:
+            writeAlphabet("../Fonts/myfont/space.png")
+
+
+def writeByLine(data):
+    global x, y, background, pageNum, writing
+
+    if data == "":
+        newLine
+    else:
+        data = data.split(" ")
+        check_pageExceed()
+
+        for word in data:
+            ProcessNwrite(word)
+            space()
 
 
 
