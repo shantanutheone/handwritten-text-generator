@@ -17,7 +17,7 @@ args = vars(ap.parse_args())
 os.makedirs("./Output", exist_ok=True)
 os.makedirs("./PDF_Outputs", exist_ok=True)
 
-background = Image.open("./images/a4.jpg")
+background = Image.open("../images/a4.jpg")
 SheetWidth = background.width
 margin = 115
 lineMargin = 115
@@ -29,7 +29,7 @@ wordsPerLine = 80
 maxLenPerPage = 3349
 pageNum = 1
 
-filePath = "./raw/input.txt"
+filePath = "../raw/input.txt"
 writing = args["font"]
 
 
@@ -39,7 +39,7 @@ else:
     lineGap = 150
 
 # Whose handwriting you want?
-FontType = "./fonts/{}_font/".format(writing)
+FontType = "../fonts/{}_font/".format(writing)
 
 print("Starting.")
 
@@ -61,7 +61,7 @@ if scale_percent < 0 or scale_percent > 100 or scale_percent < 40:
 def space():
     global x, y
 
-    space = Image.open("./images/space.png")
+    space = Image.open("../images/space.png")
     width = space.width
     x += width
     background.paste(space, (x, y))
@@ -87,9 +87,9 @@ def check_pageExceed():
     global writing, pageNum, background, x, y, margin, lineGap
 
     if y >= 3100:
-        background.save("../Output/{}_output_{}.png".format(writing, pageNum))
+        background.save("./Output/{}_output_{}.png".format(writing, pageNum))
         print("Saved Page: ", pageNum)
-        bg = Image.open("../Fonts/myfont/a4.jpg")
+        bg = Image.open(".../images/a4.jpg")
         background = bg
         x, y = margin, margin + lineGap
         pageNum += 1
@@ -178,7 +178,7 @@ def ProcessNwrite(word):
             writeAlphabet(path)
             path = FontType
         else:
-            writeAlphabet("../Fonts/myfont/space.png")
+            writeAlphabet("../images/space.png")
 
 
 def writeByLine(data):
