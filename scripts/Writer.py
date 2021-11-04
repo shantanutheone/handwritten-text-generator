@@ -6,14 +6,18 @@ import cv2
 import os
 import time
 
+# Creates a Parser
 ap = argparse.ArgumentParser()
+# Add arguments to Parser
 ap.add_argument("-f", "--font", required=True, help="font")
+# Args is now dict {"key1": "value1", "f": input1, "font": "input2"}
 args = vars(ap.parse_args())
 
-os.makedirs("../Output", exist_ok=True)
-os.makedirs("../PDF_Outputs", exist_ok=True)
+# Directory for Output files
+os.makedirs("./Output", exist_ok=True)
+os.makedirs("./PDF_Outputs", exist_ok=True)
 
-background = Image.open("../Fonts/myfont/a4.jpg")
+background = Image.open("./images/a4.jpg")
 SheetWidth = background.width
 margin = 115
 lineMargin = 115
@@ -25,20 +29,17 @@ wordsPerLine = 80
 maxLenPerPage = 3349
 pageNum = 1
 
-filePath = "../input.txt"
+filePath = "./raw/input.txt"
 writing = args["font"]
 
 
 if writing.lower() == "uv":
-      lineGap = 120
-elif writing.lower() == "rajat" or writing.lower() == "swagat":
-  lineGap = 165
-elif writing.lower() == "piyush":
-  lineGap = 144
+    lineGap = 120
 else:
-  lineGap = 150
+    lineGap = 150
 
-FontType = "../Fonts/{}_font/".format(writing)
+# Whose handwriting you want?
+FontType = "./fonts/{}_font/".format(writing)
 
 print("Starting.")
 
@@ -60,7 +61,7 @@ if scale_percent < 0 or scale_percent > 100 or scale_percent < 40:
 def space():
     global x, y
 
-    space = Image.open("../Fonts/myfont/space.png")
+    space = Image.open("./images/space.png")
     width = space.width
     x += width
     background.paste(space, (x, y))
@@ -211,10 +212,10 @@ if __name__ == "__main__":
             newLine()
         print("Saved Page: ", pageNum)
 
-        background.save("../Output/{}_output_{}.png".format(writing, pageNum))
+        background.save("./Output/{}_output_{}.png".format(writing, pageNum))
 
         ImagesPath = [
-            "../Output/{}_output_{}.png".format(writing, page)
+            "./Output/{}_output_{}.png".format(writing, page)
             for page in range(1, pageNum + 1)
         ]
 
@@ -246,7 +247,7 @@ if __name__ == "__main__":
             pdf.image(ImagesPath[i], 0, 0)
 
         print("Saving the pdf.")
-        pdf_name = "../PDF_Outputs/{}_Output.pdf".format(writing)
+        pdf_name = "./PDF_Outputs/{}_Output.pdf".format(writing)
         pdf.output(pdf_name, "F")
 
         print("Removing unnecessary files.")
